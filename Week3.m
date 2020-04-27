@@ -1,5 +1,5 @@
 % Timor Leiderman 16_03_2020
-% matlab week 3 intoduction
+% matlab week 3
 % talked about qunatization, uniform, loyd-max etc..
 %1/deltax = omega_s_x <= 2omega_x_0; omega 2*pi*f
 
