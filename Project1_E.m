@@ -4,12 +4,7 @@ clear
 % Motion Blur parameters estimation
 % define parameters for angle and length
 L1 = 20;
-L2 = 40;
 alpha = 30;
-theta = 0:5:180;
-wavelength = 10;
-
-rect_L = 10;
 
 % find the path to the images
 camera_man_path = which('cameraman.tif');
@@ -26,23 +21,42 @@ h1 = fspecial('motion', L1, alpha);
 motion_blur_camera_man1 = imfilter(camera_man_img, h1, 'conv', 'circular');
 
 % FFT and remove edges for adge artifacts
-camera_man_img_fft = fft2(camera_man_img);
-motion_blur_camera_man_fft1 = fft2(motion_blur_camera_man1);
+camera_man_img_fft = abs(fft2(camera_man_img));
+motion_blur_camera_man_fft1 = abs(fft2(motion_blur_camera_man1));
 
 % calc log spectrum
-log_spec_camera_man_fft = log(abs(camera_man_img_fft));
-log_spec_camera_man_fft1 = log(abs(motion_blur_camera_man_fft1));
+log_spec_camera_man_fft = log(abs(camera_man_img_fft+1));
+log_spec_camera_man_fft1 = log(abs(motion_blur_camera_man_fft1 +1));
 
-cepstrum_func = ifft2(log_spec_camera_man_fft);
-cepstrum_func1 = ifft2(log_spec_camera_man_fft1);
+% calculate cepstrum
+cepstrum_func = fftshift(ifft2(log_spec_camera_man_fft));
+cepstrum_func1 = fftshift(ifft2(log_spec_camera_man_fft1));
 
+
+% find the munimum peak
+cep_min= min(cepstrum_func1(:));
+
+% index the row and colum of the minimas
+[row_min_idx col_min_idx] = find (cepstrum_func1 ==  cep_min)
+
+% calculate the length and angle between the peak
+% I used the fftshift so the peaks located near the center calculation
+% divide by 2
+
+cep_lenght = (sqrt( (row_min_idx(1) - row_min_idx(2))^2 + (col_min_idx(1) - col_min_idx(2))^2 ))/2;
+cep_theta = atand(abs((col_min_idx(1)-m/2))/abs((row_min_idx(1) - n/2)))/2;
+% generate filter with estimated parametes
+h11 = fspecial('motion', cep_lenght, cep_theta);
+
+% apply wiener filter to reconstruct the image
+wnr_deblur_camera_man_1 = deconvwnr(motion_blur_camera_man1, h11);
+ 
 % plot the resaults
-fig_h = 2;
+fig_h = 3;
 fig_w = 2;
-fig_idx = 1;
 
 figure(1);
-
+fig_idx = 1;
 subplot(fig_h,fig_w,fig_idx);
 imshow(uint8(camera_man_img));
 title('Camera man image');
@@ -54,14 +68,21 @@ title(txt);
 
 fig_idx  = fig_idx + 1;
 subplot(fig_h, fig_w, fig_idx);
-imshow(fftshift(cepstrum_func));
+imshow(cepstrum_func);
 txt=['cepstrum orig'];
 title(txt);
 axis('off');
 
 fig_idx  = fig_idx + 1;
 subplot(fig_h, fig_w, fig_idx);
-imshow(fftshift(cepstrum_func1));
+imshow(cepstrum_func1);
 txt=['cepstrum blur'];
+title(txt);
+axis('off');
+
+fig_idx  = fig_idx + 2;
+subplot(fig_h, fig_w, fig_idx);
+imshow(wnr_deblur_camera_man_1);
+txt=['wiener L=' num2str(cep_lenght) 'theta=' num2str(cep_theta)];
 title(txt);
 axis('off');

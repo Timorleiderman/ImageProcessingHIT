@@ -1,7 +1,6 @@
 % Timor Leiderman Project 1 image processing 2020
-% Based on the paper Review of motion Blur Estimation Techniques
+% Based on the paper Motion blur parameters estimation for image restoration
 clear
-% Motion Blur parameters estimation
 % define parameters for angle and length
 L1 = 20;
 L2 = 40;
@@ -19,7 +18,6 @@ camera_man_img = double(imread(camera_man_path));
 % generate filters
 h1 = fspecial('motion', L1, alpha);
 
-
 % apply filters
 motion_blur_camera_man1 = imfilter(camera_man_img, h1, 'conv', 'circular');
 
@@ -31,23 +29,36 @@ motion_blur_camera_man_fft1 = fftshift(fft2(motion_blur_camera_man1));
 log_spec_camera_man_fft = abs(log(camera_man_img_fft));
 log_spec_camera_man_fft1 = abs(log(motion_blur_camera_man_fft1));
 
+% gabor angles vector initialize
 gabor_angles = zeros(length(theta),1);
 for i = 1: length(theta)
+    % define gabor function
     g = gabor(wavelength,theta(i));
-%     imshow(g.SpatialKernel)
+    
+    % convolv gabor kernel with the log fft of the blured image
     conv_gabor_log_fft1 = conv2(log_spec_camera_man_fft1, g(:).SpatialKernel, 'same');
+    
+    % find the maxima
     gabor_angles(i) = max(max(conv_gabor_log_fft1)) ;
 end
 
+% convert all angles raians to degrees
 gabor_angles = rad2deg(angle(gabor_angles));
+
+% get the max of all orientation
 max_gabor_angle= max(gabor_angles);
+
+% get the index of the oriantation
 theta_blur_idx = find(gabor_angles==max_gabor_angle);
+
+% find the angle of the blur
 theta_blur = theta(theta_blur_idx);
 gabor_found_kernel = gabor(wavelength,theta_blur);
 
+% generate filter with the estimated angle
 h11 = fspecial('motion', L1, theta_blur);
-% apply wiener filter to reconstruct the image
 
+% apply wiener filter to reconstruct the image
 wnr_deblur_camera_man_1 = deconvwnr(motion_blur_camera_man1, h11);
 
 % plot the resaults

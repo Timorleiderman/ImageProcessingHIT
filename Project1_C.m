@@ -1,4 +1,5 @@
-% Timor Leiderman Project 1 image processing 2020
+% Timor Leiderman Project 1 image processing course 2020
+
 % Based on the paper Review of motion Blur Estimation Techniques
 clear
 % Motion Blur parameters estimation

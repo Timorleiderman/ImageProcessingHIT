@@ -1,4 +1,4 @@
-% Timor Leiderman Project 1 image processing 2020
+% Timor Leiderman Project 1 image processing course 2020
 clear
 
 % find the path to the images
