@@ -1,8 +1,7 @@
 % Timor Leiderman Project 1 image processing 2020
-% Based on the paper Review of motion Blur Estimation Techniques
+% Based on the paper On the Cepstrum of Two-Dimensional Functious
 clear
-% Motion Blur parameters estimation
-% define parameters for angle and length
+% define parameters for angle and length for the blur
 L1 = 20;
 alpha = 30;
 
@@ -25,8 +24,8 @@ camera_man_img_fft = abs(fft2(camera_man_img));
 motion_blur_camera_man_fft1 = abs(fft2(motion_blur_camera_man1));
 
 % calc log spectrum
-log_spec_camera_man_fft = log(abs(camera_man_img_fft+1));
-log_spec_camera_man_fft1 = log(abs(motion_blur_camera_man_fft1 +1));
+log_spec_camera_man_fft = log(camera_man_img_fft);
+log_spec_camera_man_fft1 = log(motion_blur_camera_man_fft1);
 
 % calculate cepstrum
 cepstrum_func = fftshift(ifft2(log_spec_camera_man_fft));
@@ -37,14 +36,26 @@ cepstrum_func1 = fftshift(ifft2(log_spec_camera_man_fft1));
 cep_min= min(cepstrum_func1(:));
 
 % index the row and colum of the minimas
-[row_min_idx col_min_idx] = find (cepstrum_func1 ==  cep_min)
+[row_min_idx, col_min_idx] = find (cepstrum_func1 ==  cep_min);
 
 % calculate the length and angle between the peak
-% I used the fftshift so the peaks located near the center calculation
-% divide by 2
 
-cep_lenght = (sqrt( (row_min_idx(1) - row_min_idx(2))^2 + (col_min_idx(1) - col_min_idx(2))^2 ))/2;
-cep_theta = atand(abs((col_min_idx(1)-m/2))/abs((row_min_idx(1) - n/2)))/2;
+% I used the fftshift so the peaks located near the center calculation
+% divide by 2 if found 2 peaks for one peak just calc the length
+norm_div = 0.5;
+if ( length(row_min_idx)==1 )
+    row_min_idx(2) = 128;
+    col_min_idx(2) = 128;
+    norm_div = 0;
+end
+
+% length calculated for the 2 peaks avarege if only one peak found then it
+% will take the lengh from the center
+cep_lenght = (1-norm_div)*(sqrt( (row_min_idx(1) - n/2)^2 + (col_min_idx(1) - m/2)^2 )) + norm_div*sqrt( (row_min_idx(2) - n/2)^2 + (col_min_idx(2) - m/2)^2 );
+
+% anle calc from the first peak
+cep_theta = atand( abs( (row_min_idx(1) - n/2 -1) )/ abs( (col_min_idx(1) - m/2 - 1) ) );
+
 % generate filter with estimated parametes
 h11 = fspecial('motion', cep_lenght, cep_theta);
 
@@ -82,7 +93,7 @@ axis('off');
 
 fig_idx  = fig_idx + 2;
 subplot(fig_h, fig_w, fig_idx);
-imshow(wnr_deblur_camera_man_1);
-txt=['wiener L=' num2str(cep_lenght) 'theta=' num2str(cep_theta)];
+imshow(uint8(wnr_deblur_camera_man_1));
+txt=['wiener L=' num2str(cep_lenght) ' theta=' num2str(cep_theta)];
 title(txt);
 axis('off');

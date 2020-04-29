@@ -12,7 +12,7 @@ moon_img = imread(moon_path);
 % resize the camera man image to the size of the moon so the size will fit
 % and resize the moon image to the camera man image to fit
 moon_size = size(moon_img);
-camera_man_size = size(camera_man_img)
+camera_man_size = size(camera_man_img);
 
 camera_man_img_resize = imresize(camera_man_img, [moon_size(1) moon_size(2)]);
 moon_img_img_resize = imresize(moon_img, [camera_man_size(1) camera_man_size(2)]);
