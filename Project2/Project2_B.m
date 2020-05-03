@@ -1,4 +1,6 @@
 % Timor Leiderman Image Processing course 2020
+% Based on Adaptive enhancement for nonuniform illumination
+% images via nonlinear mapping
 clear
 
 % load the image
@@ -24,7 +26,7 @@ Y = reshape(Yvec, h, w);
 % end
 
 % L is the backgroung avarage of 3X3 window
-L = conv2(single(Y), ones(3)/9, 'same');
+L = conv2(Y, ones(3)/9, 'same');
 
 %calculate luminance adaptation threshold TL
 TL = zeros(h,w);
@@ -42,14 +44,36 @@ end
 Pjnd = TL;
 
 
+
+% The notation Q(B,A) is the truncated output for a pixel 
+% with the value of B when it acts as a neighbor of a pixel A.
+Q = Y;
+for i = 1 : h-1
+   for j = 1 : w-1
+       A = Y(i,j);
+       B = Y(i+1,j+1);
+       PnjdA = Pjnd(i,j);
+       
+      if ( A < PnjdA)
+          Q(i,j) = A - PnjdA;
+      elseif ( abs(B - A) <= PnjdA )
+              Q(i,j) = B;
+      else
+             Q(i,j) = A + PnjdA; 
+       end
+   end
+end
+
+q_gauss_filter = fspecial('gaussian', [3 3], 0.5);
+Q_gauss = imfilter(Q, q_gauss_filter, 'conv', 'circular'); 
+
 % TODO:
-% The notation Q(B,A) is the truncated output for a pixel with the value of B
 % gaussian somthing
 % Yjnd sum of sothing
 % 2.2, 2.3, 2.4 ???
 
 % plot the resaults
-fig_h = 2;
+fig_h = 3;
 fig_w = 2;
 fig_idx = 1;
 
@@ -63,5 +87,22 @@ imshow(uint8(Y));
 title('Y channel');
 fig_idx  = fig_idx + 1;
 subplot(fig_h, fig_w, fig_idx);
+imshow(uint8(L));
+title('L-bg-avg');
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h, fig_w, fig_idx);
 imshow(uint8(Pjnd));
 title('P JND');
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h, fig_w, fig_idx);
+imshow(uint8(Q));
+title('Q');
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h, fig_w, fig_idx);
+imshow(uint8(Q_gauss));
+title('Q gauss filtered');
+
+
