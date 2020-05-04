@@ -15,9 +15,9 @@ Yvec = img3vec*[0.2989; 0.578; 0.114];
 Y = reshape(Yvec, h, w);
 
 % calculate luma with more lines of code
-% R = img_in(:,:,1);
-% G = img_in(:,:,2);
-% B = img_in(:,:,3);
+R = double(img_in(:,:,1));
+G = double(img_in(:,:,2));
+B = double(img_in(:,:,3));
 % Y = zeros(h,w);
 % for row = 1 : h
 %     for col = 1:w
@@ -26,7 +26,7 @@ Y = reshape(Yvec, h, w);
 % end
 
 % L is the backgroung avarage of 3X3 window
-L = conv2(Y, ones(3)/9, 'same');
+L = conv2(Y, ones(3)/9, 'full');
 
 %calculate luminance adaptation threshold TL
 TL = zeros(h,w);
@@ -42,8 +42,6 @@ end
 
 % the pixel-wise JND will be roughly estimated by TL
 Pjnd = TL;
-
-
 
 % The notation Q(B,A) is the truncated output for a pixel 
 % with the value of B when it acts as a neighbor of a pixel A.
@@ -64,17 +62,65 @@ for i = 1 : h-1
    end
 end
 
-q_gauss_filter = fspecial('gaussian', [3 3], 0.5);
+q_gauss_filter = fspecial('gaussian', [3 3], 0.6);
 Q_gauss = imfilter(Q, q_gauss_filter, 'conv', 'circular'); 
 
-% TODO:
-% gaussian somthing
-% Yjnd sum of sothing
-% 2.2, 2.3, 2.4 ???
+Yjnd = im2double(Q_gauss);
+
+Ysym = zeros(h,w);
+T = zeros(h,w);
+Hlow = zeros(h,w);
+Hhigh = zeros(h,w);
+
+%Ysym is the modified luminance by SNRF.
+
+% T represents
+% the pixel-wise demarcation between underexposure and
+% overexposure
+
+% Hlow works in the first
+% case to control the adaptation degree for underexposure
+   
+% Hhigh serves as the adaptation factor
+% in the symmetric version of Naka?Rushton formula
+
+Ymedian = mean2(median(Y))/255;
+
+for i = 1:h
+   for j = 1:w
+         T(i,j) = ( 1 - Ymedian) / ( 1 + exp( 10*(Yjnd(i,j)/255-0.7) ));
+   end
+end
+
+Ymlow = mean( T( T < 0.7 ) );
+Ymhigh = mean( T( T >= 0.7 ) );
+
+Ynorm = Y./255;
+for i = 1:h
+   for j = 1:w
+        Hlow(i,j) = (Yjnd(i,j)/255) + 0.5*Ymlow;
+        Hhigh(i,j) = 2*(Yjnd(i,j)/255)*(1-Ymhigh);
+        
+        if ( (Ynorm(i,j) > 0) && (Ynorm(i,j) <= T(i,j)) )
+            Ysym(i,j) = ( Ynorm(i,j)/( Ynorm(i,j) + Hlow(i,j)) ) * ( T(i,j) + Hlow(i,j) );
+        else
+            Ysym(i,j) = ( 1 - (1-Ynorm(i,j))/( 1 - Ynorm(i,j) + Hhigh(i,j)) ) * (1 - T(i,j) + Hhigh(i,j));
+        end
+   end
+end
+
+Ysym = Ysym.*255;
+
+R_tag = R.*(Yjnd./Y);
+G_tag = G.*(Yjnd./Y);
+B_tag = B.*(Yjnd./Y);
+
+rgbImage_recon = cat(3, R_tag, G_tag, B_tag);
+
 
 % plot the resaults
 fig_h = 3;
-fig_w = 2;
+fig_w = 3;
 fig_idx = 1;
 
 figure(1);
@@ -102,7 +148,23 @@ title('Q');
 
 fig_idx  = fig_idx + 1;
 subplot(fig_h, fig_w, fig_idx);
-imshow(uint8(Q_gauss));
-title('Q gauss filtered');
+imshow(uint8(Yjnd));
+title('Yjnd filtered');
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h, fig_w, fig_idx);
+imshow(uint8(T.*255));
+title('T ');
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h, fig_w, fig_idx);
+imshow(uint8(Ysym));
+title('Ysym filtered');
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h, fig_w, fig_idx);
+imshow(uint8(rgbImage_recon));
+title('Color reconstruction');
+
 
 
