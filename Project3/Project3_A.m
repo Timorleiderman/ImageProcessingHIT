@@ -6,15 +6,21 @@ clear
 %deefine variables
 % p -> [0 ... 1]
 p = 0.6;
-sigma = 1.2;
+omega = 0.95;
 % window size
-window_size = 3;
+
+
+
+
 % load the image
 rgb_img_in = double(imread('Fig1.png'));
 
+sigma = std2(rgb_img_in);
 % get the size of the image
 [h, w, ch] = size(rgb_img_in);
 
+window_size  = floor(2*(max(h,w)/50)) + 1;
+window_size  = 5;
 % W is the minimum of the tree channels
 W = zeros(h,w);
 for row=1:h
@@ -35,7 +41,7 @@ wind = floor(window_size/2);
 gs = exp(-(X.^2+Y.^2)/(2*sigma^2));
 
 
-W=padarray(W,[wind wind],'replicate','both');
+W = padarray(W,[wind wind],'replicate','both');
 
 R = zeros(h,w, 1);
 for row=ceil(window_size/2):size(W,1)-wind
@@ -44,7 +50,7 @@ for row=ceil(window_size/2):size(W,1)-wind
         patch1(:,:,:)=W(row-wind:row+wind,col-wind:col+wind);
         patch2(:,:,:)=W(row-wind:row+wind,col-wind:col+wind);
         
-        d = (repmat(W(row,col,:),[window_size,window_size])-patch2).^2;
+        d = (repmat(W(row,col,:), [window_size,window_size]) - patch2).^2;
         
         % intensity-domain weights. (range weights)
         gr = exp( -(d) / (2*sigma^2) );
@@ -55,15 +61,15 @@ for row=ceil(window_size/2):size(W,1)-wind
         normfactor = 1/ sum(sum(g)); 
         %apply equation:
         R(row-ceil(window_size/2)+1,col-ceil(window_size/2)+1,1)=sum(sum(g.*patch1))*normfactor;
-
-        
     end
 end
+W = W(wind+1:end-wind,wind+1:end-wind);
 
-V=padarray(V,[wind wind],'replicate','both');
-R=padarray(R,[wind wind],'replicate','both');
+V = padarray(V,[wind wind],'replicate','both');
+R = padarray(R,[wind wind],'replicate','both');
 
-VR=zeros(size(R,1),size(R,2), 1);
+VR=zeros(h,w, 1);
+
 for row=ceil(window_size/2):size(V,1)-wind
     for col=ceil(window_size/2):size(V,2)-wind
         
@@ -86,9 +92,15 @@ for row=ceil(window_size/2):size(V,1)-wind
     end
 end
 
+V = V(wind+1:end-wind,wind+1:end-wind);
+R = R(wind+1:end-wind,wind+1:end-wind);
 
+A = max(max(max(rgb_img_in)));
 
+t = 1 - (omega*VR)./A;
 
+t0 = min(t);
+J = ( (rgb_img_in-A)./max(t,t0) )+ A;
 
 
 % plot the resaults
@@ -131,3 +143,13 @@ subplot(fig_h, fig_w, fig_idx);
 imshow(uint8(VR), []);
 title('VR');
 
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h, fig_w, fig_idx);
+imshow(uint8(t.*255));
+title('t');
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h, fig_w, fig_idx);
+imshow(uint8(J));
+title('J');
