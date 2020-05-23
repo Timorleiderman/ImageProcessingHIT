@@ -62,10 +62,15 @@ for i = 1 : h-1
    end
 end
 
+
+%  Gaussian distance weights.
+% [X,Y] = meshgrid(-w:w,-w:w);
+% G = exp(-(X.^2+Y.^2)/(2*sigma_d^2));
+
 q_gauss_filter = fspecial('gaussian', [3 3], 0.6);
 Q_gauss = imfilter(Q, q_gauss_filter, 'conv', 'circular'); 
 
-Yjnd = im2double(Q_gauss);
+Yjnd = double(Q_gauss);
 
 Ysym = zeros(h,w);
 T = zeros(h,w);
@@ -92,8 +97,8 @@ for i = 1:h
    end
 end
 
-Ymlow = mean( T( T < 0.7 ) );
-Ymhigh = mean( T( T >= 0.7 ) );
+Ymlow = mean( T( T < 0.6 ) );
+Ymhigh = mean( T( T >= 0.6 ) );
 
 Ynorm = Y./255;
 for i = 1:h
@@ -101,7 +106,7 @@ for i = 1:h
         Hlow(i,j) = (Yjnd(i,j)/255) + 0.5*Ymlow;
         Hhigh(i,j) = 2*(Yjnd(i,j)/255)*(1-Ymhigh);
         
-        if ( (Ynorm(i,j) > 0) && (Ynorm(i,j) <= T(i,j)) )
+        if ((Ynorm(i,j) <= T(i,j)) )
             Ysym(i,j) = ( Ynorm(i,j)/( Ynorm(i,j) + Hlow(i,j)) ) * ( T(i,j) + Hlow(i,j) );
         else
             Ysym(i,j) = ( 1 - (1-Ynorm(i,j))/( 1 - Ynorm(i,j) + Hhigh(i,j)) ) * (1 - T(i,j) + Hhigh(i,j));
@@ -111,9 +116,9 @@ end
 
 Ysym = Ysym.*255;
 
-R_tag = R.*(Yjnd./Y);
-G_tag = G.*(Yjnd./Y);
-B_tag = B.*(Yjnd./Y);
+R_tag = R.*(Ysym./Y);
+G_tag = G.*(Ysym./Y);
+B_tag = B.*(Ysym./Y);
 
 rgbImage_recon = cat(3, R_tag, G_tag, B_tag);
 
