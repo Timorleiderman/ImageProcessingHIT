@@ -4,36 +4,36 @@
 clear
 
 %deefine variables
-sigma = 1.2;
-window_size = 3;
-% load the image
-img_in = double(imread('Fig1.png'));
 
-I = log(1 + img_in);
+window_size = 3;
+
+% load the image
+img_in = imread('Fig1.png');
+
 % get the size of the image
 [h, w, ch] = size(img_in);
 
-M = 2*h + 1;
-N = 2*w + 1;
+img_in_double = double(img_in);
 
-[X, Y] = meshgrid(1:N,1:M);
-centerX = ceil(N/2);
-centerY = ceil(M/2);
-gaussianNumerator = (X - centerX).^2 + (Y - centerY).^2;
-H = exp(-gaussianNumerator./(2*sigma.^2));
-H = 1 - H;
+sigma = std2(img_in_double)/h;
 
-% wind = floor(window_size/2);
-% [X,Y] = meshgrid(-wind:wind,-wind:wind);
-% gs = 1 - exp(-(X.^2+Y.^2)/(2*sigma^2));
-% H = 1 - gs;
+img_in_log = log(1 + img_in_double);
 
-H = fftshift(H);
-If = fft2(I, M, N);
-Iout = real(ifft2(H.*If));
-Iout = Iout(1:size(I,1),1:size(I,2));
+img_in_fft = fftshift(fft2(img_in_log));
 
-Ihmf = exp(Iout) - 1;
+% create gaussian filter
+[X, Y] = meshgrid(1:w,1:h);
+centerX = ceil(w/2);
+centerY = ceil(h/2);
+gaussianNumerator = (X-centerX).^2 + (Y-centerY).^2;
+H = 1 - exp(-gaussianNumerator./(2*sigma.^2));
+
+% apply gaussian filter
+H_filtered = img_in_fft.*H;
+
+H_fil_ifft = ifft2(ifftshift(H_filtered));
+
+G = abs(exp(H_fil_ifft) + 1);
 
 % plot the resaults
 fig_h = 3;
@@ -47,8 +47,24 @@ title('Orig image');
 
 fig_idx  = fig_idx + 1;
 subplot(fig_h,fig_w,fig_idx);
-imshow(uint8(Ihmf),[]);
-title('Ihmf');
+imshow(uint8(abs(img_in_fft)));
+title('img in fft');
+axis('off');
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h,fig_w,fig_idx);
+imshow(uint8(abs(H_filtered)), []);
+title('img filtered');
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h,fig_w,fig_idx);
+imshow(uint8(G));
+title('G');
+
+
+
+
+
 
 
 
