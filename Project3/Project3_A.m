@@ -15,7 +15,7 @@ omega = 0.95;
 % load the image
 rgb_img_in = double(imread('Fig1.png'));
 
-sigma = std2(rgb_img_in);
+sigma = std2(rgb_img_in)/100;
 % get the size of the image
 [h, w, ch] = size(rgb_img_in);
 
@@ -99,7 +99,7 @@ A = max(max(max(rgb_img_in)));
 
 t = 1 - (omega*VR)./A;
 
-t0 = min(t);
+t0 = min(min(t));
 J = ( (rgb_img_in-A)./max(t,t0) )+ A;
 
 
