@@ -9,18 +9,16 @@ p = 0.6;
 omega = 0.95;
 % window size
 
-
-
-
 % load the image
 rgb_img_in = double(imread('Fig1.png'));
 
 sigma = std2(rgb_img_in)/100;
+% sigma = 5;
 % get the size of the image
 [h, w, ch] = size(rgb_img_in);
 
-window_size  = floor(2*(max(h,w)/50)) + 1;
-window_size  = 5;
+% window_size  = (2*(max(h,w)/50))+1;
+window_size  = 9;
 % W is the minimum of the tree channels
 W = zeros(h,w);
 for row=1:h
@@ -95,7 +93,25 @@ end
 V = V(wind+1:end-wind,wind+1:end-wind);
 R = R(wind+1:end-wind,wind+1:end-wind);
 
-A = max(max(max(rgb_img_in)));
+% seperate image to channels
+R_ch = rgb_img_in(:,:,1);
+G_ch = rgb_img_in(:,:,2);
+B_ch = rgb_img_in(:,:,3);
+
+sum_R = sum(sum(R_ch));
+sum_G = sum(sum(G_ch));
+sum_B = sum(sum(B_ch));
+
+% find the darkest channel
+if (sum_R <= sum_G) && (sum_R <= sum_B)
+     darkest = R_ch;
+elseif (sum_G <= sum_R) && (sum_G <= sum_B)
+     darkest = G_ch;
+else
+     darkest = B_ch;    
+end
+   
+A = max(max(darkest));
 
 t = 1 - (omega*VR)./A;
 
