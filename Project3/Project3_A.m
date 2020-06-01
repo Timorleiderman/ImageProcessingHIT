@@ -13,19 +13,25 @@ omega = 0.95;
 rgb_img_in = double(imread('Fig1.png'));
 
 sigma = std2(rgb_img_in)/100;
-% sigma = 5;
+sigma = 5;
 % get the size of the image
 [h, w, ch] = size(rgb_img_in);
 
 % window_size  = (2*(max(h,w)/50))+1;
 window_size  = 9;
 % W is the minimum of the tree channels
-W = zeros(h,w);
-for row=1:h
-    for col=1:w
-        W(row, col) = min(rgb_img_in(row, col, :));
-    end
-end
+
+% W = zeros(h,w);
+% for row=1:h
+%     for col=1:w
+%         W(row, col) = min(rgb_img_in(row, col, :));
+%     end
+% end
+
+C_sum = sum(sum(rgb_img_in(:,:,:)));
+[min_C, min_idx] = min (C_sum);
+W = rgb_img_in(:,:,min_idx);
+
 
 B = medfilt2(W);
 
