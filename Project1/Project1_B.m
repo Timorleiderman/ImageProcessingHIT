@@ -26,18 +26,25 @@ I1(150,150) = 255;
 figure(1)
 subplot(2,1,1)
 imagesc(theta,xp,R);
+title('Radon of 4 Lines')
+axis('off')
 subplot(2,1,2)
 imagesc(theta,xp1,R1);
-
+title('Radon 4 Dots')
+axis('off')
 
 figure(2)
 subplot(2,2,1)
 imshow(I);
+title('4 Lines')
 subplot(2,2,2)
 imshow(R);
+title('Radon of 4 Lines')
 
 subplot(2,2,3)
 imshow(I1);
+title('4 Dots')
 subplot(2,2,4)
 imshow(R1);
+title('Radon 4 Dots')
 

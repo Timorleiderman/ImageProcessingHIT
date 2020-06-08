@@ -9,6 +9,7 @@ L2 = 40;
 alpha = 30;
 theta = 0:180;
 
+remove_edges = 4
 % find the path to the images
 camera_man_path = which('cameraman.tif');
 % load the image
@@ -17,8 +18,9 @@ camera_man_img = double(imread(camera_man_path));
 % get the size of the image
 [m, n] = size(camera_man_img);
 
-% hann_filter = hann(m)*hann(n)';
+
 % its making the image look dark so I just removed the edges
+% hann_filter = hann(n,'periodic');
 % camera_man_img = double(uint8(camera_man_img.*hann_filter));
 
 % generate filters
@@ -31,8 +33,8 @@ motion_blur_camera_man2 = imfilter(camera_man_img, h2, 'conv', 'circular');
 
 % FFT and remove edges for adge artifacts
 camera_man_img_fft = fftshift(fft2(camera_man_img));
-motion_blur_camera_man_fft1 = fftshift(fft2(motion_blur_camera_man1(2:end-2,2:end-2)));
-motion_blur_camera_man_fft2 = fftshift(fft2(motion_blur_camera_man2(2:end-2,2:end-2)));
+motion_blur_camera_man_fft1 = fftshift(fft2(motion_blur_camera_man1(remove_edges:end-remove_edges,remove_edges:end-remove_edges)));
+motion_blur_camera_man_fft2 = fftshift(fft2(motion_blur_camera_man2(remove_edges:end-remove_edges,remove_edges:end-remove_edges)));
 
 % calc log spectrum
 log_spec_camera_man_fft = abs(log(camera_man_img_fft));
@@ -52,8 +54,8 @@ maxR2 = max(max(R2));
 [row_idx2, col_idx2] = find(R2 == maxR2);
 
 % find corresponding angle
-angle_blur_camera_man1 = theta(col_idx1);
-angle_blur_camera_man2 = theta(col_idx2);
+angle_blur_camera_man1 = theta(col_idx1-1);
+angle_blur_camera_man2 = theta(col_idx2-1);
 
 % find local minima in radon transform and generate binery map '1' is
 % minima
