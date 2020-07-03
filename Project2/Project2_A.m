@@ -10,9 +10,9 @@ gauss_std = 0.5;
 
 % img_in = imread('ratinal.jpg');
 % img_in = imread('ratinalRGB1.png');
-img_in = imread('rice.png');
+% img_in = imread('rice.png');
 % img_in = imread('sunflowerseeds.jpeg');
-% img_in = imread('sunflowerseeds_white_back.jpeg');
+ img_in = imread('sunflowerseeds_white_back.jpeg');
 [h, w, ch] = size(img_in);
 if (ch == 3)
     img_gray = rgb2gray(img_in);
@@ -41,7 +41,7 @@ figure(2);
 if (ch == 3)
     subplot(fig_h,fig_w,fig_idx);
     imshow(uint8(img_in));
-    txt = 'ratinal RGB orig';
+    txt = 'RGB orig';
     title(txt);
 else
     fig_h = fig_h - 1;
@@ -51,7 +51,7 @@ end
 fig_idx  = fig_idx + 2;
 subplot(fig_h,fig_w,fig_idx);
 imshow(uint8(img_gray));
-txt = 'ratinal gray orig';
+txt = 'gray orig';
 title(txt);
 
 fig_idx  = fig_idx + 1;

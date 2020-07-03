@@ -4,7 +4,7 @@
 clear
 
 % load the image
-img_in = imread('fig1.png');
+img_in = imread('fig5.png');
 
 % get the size of the image
 [h, w, ch] = size(img_in);
@@ -15,9 +15,9 @@ Yvec = img3vec*[0.2989; 0.578; 0.114];
 Y = reshape(Yvec, h, w);
 
 % calculate luma with more lines of code
-R = double(img_in(:,:,1));
-G = double(img_in(:,:,2));
-B = double(img_in(:,:,3));
+R_ch = double(img_in(:,:,1));
+G_ch = double(img_in(:,:,2));
+B_ch = double(img_in(:,:,3));
 % Y = zeros(h,w);
 % for row = 1 : h
 %     for col = 1:w
@@ -27,7 +27,7 @@ B = double(img_in(:,:,3));
 
 % L is the backgroung avarage of 3X3 window
 L = conv2(Y, ones(3)/9, 'full');
-
+% L = Y
 %calculate luminance adaptation threshold TL
 TL = zeros(h,w);
 for i = 1:h
@@ -45,17 +45,19 @@ Pjnd = TL;
 
 % The notation Q(B,A) is the truncated output for a pixel 
 % with the value of B when it acts as a neighbor of a pixel A.
-Q = Y;
+Q = zeros(h,w);
+
+h_filter = [1 1 1; 1 0 1; 1 1 1]./8
+B = conv2(Y, h_filter, 'full');
 for i = 1 : h-1
    for j = 1 : w-1
        A = Y(i,j);
-       B = Y(i+1,j+1);
        PnjdA = Pjnd(i,j);
        
       if ( A < PnjdA)
           Q(i,j) = A - PnjdA;
-      elseif ( abs(B - A) <= PnjdA )
-              Q(i,j) = B;
+      elseif ( abs(B(i,j) - A) <= PnjdA )
+              Q(i,j) = B(i,j);
       else
              Q(i,j) = A + PnjdA; 
        end
@@ -116,15 +118,20 @@ end
 
 Ysym = Ysym.*255;
 
-R_tag = R.*(Ysym./Y);
-G_tag = G.*(Ysym./Y);
-B_tag = B.*(Ysym./Y);
+R_tag = R_ch.*(Ysym./Y);
+G_tag = G_ch.*(Ysym./Y);
+B_tag = B_ch.*(Ysym./Y);
+
+R_tag_sq = R_ch.*((Ysym./Y).^(1-sqrt(R_ch)));
+G_tag_sq = G_ch.*((Ysym./Y).^(1-sqrt(G_ch)));
+B_tag_sq = B_ch.*((Ysym./Y).^(1-sqrt(B_ch)));
 
 rgbImage_recon = cat(3, R_tag, G_tag, B_tag);
+rgbImage_recon_sq = cat(3, R_tag_sq, G_tag_sq, B_tag_sq);
 
 
 % plot the resaults
-fig_h = 3;
+fig_h = 4;
 fig_w = 3;
 fig_idx = 1;
 
@@ -170,6 +177,11 @@ fig_idx  = fig_idx + 1;
 subplot(fig_h, fig_w, fig_idx);
 imshow(uint8(rgbImage_recon));
 title('Color reconstruction');
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h, fig_w, fig_idx);
+imshow(uint8(rgbImage_recon_sq));
+title('Color reconstruction sqrt');
 
 
 
