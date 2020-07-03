@@ -1,10 +1,13 @@
-% Timor Leiderman Image Processing course 2020
+% % Timor Leiderman Image Processing course 2020
 % Based on Adaptive enhancement for nonuniform illumination
 % images via nonlinear mapping
 clear
 
 % load the image
-img_in = imread('fig5.png');
+% img_in = imread('fig1.png');
+% img_in = imread('fig2.png');
+% img_in = imread('fig6.png');
+img_in = imread('fig7.png');
 
 % get the size of the image
 [h, w, ch] = size(img_in);
@@ -47,7 +50,7 @@ Pjnd = TL;
 % with the value of B when it acts as a neighbor of a pixel A.
 Q = zeros(h,w);
 
-h_filter = [1 1 1; 1 0 1; 1 1 1]./8
+h_filter = [1 1 1; 1 0 1; 1 1 1]./8;
 B = conv2(Y, h_filter, 'full');
 for i = 1 : h-1
    for j = 1 : w-1
@@ -116,15 +119,21 @@ for i = 1:h
    end
 end
 
+% because Ysym is streached in the [0 1] region we transform it back to
+% uint8
 Ysym = Ysym.*255;
+
+% gamma corrected Y
+Y_tag = 1 + Y - 0.7;
 
 R_tag = R_ch.*(Ysym./Y);
 G_tag = G_ch.*(Ysym./Y);
 B_tag = B_ch.*(Ysym./Y);
 
-R_tag_sq = R_ch.*((Ysym./Y).^(1-sqrt(R_ch)));
-G_tag_sq = G_ch.*((Ysym./Y).^(1-sqrt(G_ch)));
-B_tag_sq = B_ch.*((Ysym./Y).^(1-sqrt(B_ch)));
+% reconstruct the gamma corrected
+R_tag_sq = R_ch.*( (Y_tag./Y).^( 1 - sqrt(R_ch) ) );
+G_tag_sq = G_ch.*( (Y_tag./Y).^( 1 - sqrt(G_ch) ) );
+B_tag_sq = B_ch.*( (Y_tag./Y).^( 1 - sqrt(B_ch) ) );
 
 rgbImage_recon = cat(3, R_tag, G_tag, B_tag);
 rgbImage_recon_sq = cat(3, R_tag_sq, G_tag_sq, B_tag_sq);
@@ -161,7 +170,7 @@ title('Q');
 fig_idx  = fig_idx + 1;
 subplot(fig_h, fig_w, fig_idx);
 imshow(uint8(Yjnd));
-title('Yjnd filtered');
+title('Y_{jnd} filtered');
 
 fig_idx  = fig_idx + 1;
 subplot(fig_h, fig_w, fig_idx);
@@ -171,17 +180,17 @@ title('T ');
 fig_idx  = fig_idx + 1;
 subplot(fig_h, fig_w, fig_idx);
 imshow(uint8(Ysym));
-title('Ysym filtered');
+title('Y_{sym} filtered');
 
 fig_idx  = fig_idx + 1;
 subplot(fig_h, fig_w, fig_idx);
 imshow(uint8(rgbImage_recon));
-title('Color reconstruction');
+title('Color reconstruction with Y_{sym}');
 
 fig_idx  = fig_idx + 1;
 subplot(fig_h, fig_w, fig_idx);
 imshow(uint8(rgbImage_recon_sq));
-title('Color reconstruction sqrt');
+title("Color reconstruction gamma corrected Y'");
 
 
 
