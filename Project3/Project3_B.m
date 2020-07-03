@@ -1,14 +1,14 @@
 % Timor Leiderman Image Processing course 2020
 % Based on Fast image dehazing using guided joint bilateral filter
 
-clear
+function Project3_A(gui_img_in)
 
 %deefine variables
 
 window_size = 3;
 
 % load the image
-img_in = imread('Fig1.png');
+img_in = imread(gui_img_in);
 
 % get the size of the image
 [h, w, ch] = size(img_in);

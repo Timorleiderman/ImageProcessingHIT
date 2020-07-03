@@ -1,7 +1,7 @@
 % Timor Leiderman Project 1 image processing course 2020
 
 % Based on the paper Review of motion Blur Estimation Techniques
-clear
+function Project1_C
 % Motion Blur parameters estimation
 % define parameters for angle and length
 L1 = 20;

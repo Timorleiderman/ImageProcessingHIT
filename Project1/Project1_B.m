@@ -1,5 +1,5 @@
 % Timor Leiderman Project 1 image processing 2020
-clear
+function Project1_B
 
 I = zeros(313);
 theta = 0:180;

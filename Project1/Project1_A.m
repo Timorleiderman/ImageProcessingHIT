@@ -1,5 +1,5 @@
 % Timor Leiderman Project 1 image processing course 2020
-clear
+function Project1_A
 
 % find the path to the images
 camera_man_path = which('cameraman.tif');

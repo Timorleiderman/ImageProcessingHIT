@@ -1,6 +1,6 @@
 % Timor Leiderman Project 1 image processing 2020
 % Based on the paper Motion blur parameters estimation for image restoration
-clear
+function Project1_D
 % define parameters for angle and length
 L1 = 20;
 L2 = 40;

@@ -1,14 +1,15 @@
 % % Timor Leiderman Image Processing course 2020
 % Based on Adaptive enhancement for nonuniform illumination
 % images via nonlinear mapping
-clear
+function Project2_B(gui_img_in)
 
 % load the image
 % img_in = imread('fig1.png');
 % img_in = imread('fig2.png');
 % img_in = imread('fig6.png');
-img_in = imread('fig7.png');
-
+% img_in = imread('fig7.png');
+% img_in = imread('fig7.png');
+img_in = imread(char(gui_img_in));
 % get the size of the image
 [h, w, ch] = size(img_in);
 

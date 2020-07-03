@@ -1,5 +1,5 @@
 % Timor Leiderman Image Processing course 2020
-clear
+function Project2_A(gui_img_in)
 
 % define parameters
 lpf_size = 6;
@@ -12,7 +12,10 @@ gauss_std = 0.5;
 % img_in = imread('ratinalRGB1.png');
 % img_in = imread('rice.png');
 % img_in = imread('sunflowerseeds.jpeg');
- img_in = imread('sunflowerseeds_white_back.jpeg');
+%  img_in = imread('sunflowerseeds_white_back.jpeg');
+
+ img_in = imread(char(gui_img_in));
+ 
 [h, w, ch] = size(img_in);
 if (ch == 3)
     img_gray = rgb2gray(img_in);

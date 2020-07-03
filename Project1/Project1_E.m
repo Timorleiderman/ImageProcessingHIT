@@ -1,6 +1,6 @@
 % Timor Leiderman Project 1 image processing 2020
 % Based on the paper On the Cepstrum of Two-Dimensional Functious
-clear
+function Project1_E
 % define parameters for angle and length for the blur
 L1 = 20;
 alpha = 30;
