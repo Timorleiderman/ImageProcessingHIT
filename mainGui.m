@@ -22,7 +22,7 @@ function varargout = mainGui(varargin)
 
 % Edit the above text to modify the response to help mainGui
 
-% Last Modified by GUIDE v2.5 03-Jul-2020 20:52:52
+% Last Modified by GUIDE v2.5 07-Jul-2020 01:45:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -76,13 +76,30 @@ function varargout = mainGui_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 function img_in = file_path()
-       [File_Name, Path_Name] = uigetfile('*.*', 'Select a image File');
+       [File_Name, Path_Name] = uigetfile( ...
+           {'*.jpg;*.jpeg;*.png;*.tif;*.bmp',...
+            'image file(*.jpg,*.jpeg,*.png,*.tif,*.bmp)';}, ...
+            'Select a File');
+
        img_in = [Path_Name, File_Name];
 
 % --- Executes on button press in pushbutton2b.
 function pushbutton2b_Callback(hObject, eventdata, handles)
-clear
-Project2_B(file_path())
+if isfile(handles.project2b_filepath.String)
+    Project2_B(handles.project2b_filepath.String, ...
+        str2double(handles.sigma_project2b.String), ...
+        str2double(handles.project2b_exp_theshold.String));
+else
+    warningMessage = sprintf('Warning: file does not exist:\n%s', handles.project2b_filepath.String);
+    uiwait(msgbox(warningMessage));
+    img_file_path = file_path()
+    handles.project2b_filepath.String = img_file_path
+    Project2_B(img_file_path, ...
+        str2double(handles.sigma_project2b.String), ...
+        str2double(handles.project2b_exp_theshold.String));
+end
+
+
 % hObject    handle to pushbutton2b (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -158,3 +175,66 @@ Project3_B(file_path())
 % hObject    handle to pushbutton3b (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+
+function project2b_filepath_Callback(hObject, eventdata, handles)
+% hObject    handle to project2b_filepath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of project2b_filepath as text
+%        str2double(get(hObject,'String')) returns contents of project2b_filepath as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function project2b_filepath_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to project2b_filepath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function sigma_project2b_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sigma_project2b (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+
+function sigma_project2b_Callback(hObject, eventdata, handles)
+% hObject    handle to sigma_project2b (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of sigma_project2b as text
+%        str2double(get(hObject,'String')) returns contents of sigma_project2b as a double
+
+
+
+function project2b_exp_theshold_Callback(hObject, eventdata, handles)
+% hObject    handle to project2b_exp_theshold (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of project2b_exp_theshold as text
+%        str2double(get(hObject,'String')) returns contents of project2b_exp_theshold as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function project2b_exp_theshold_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to project2b_exp_theshold (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

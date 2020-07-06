@@ -1,7 +1,7 @@
 % % Timor Leiderman Image Processing course 2020
 % Based on Adaptive enhancement for nonuniform illumination
 % images via nonlinear mapping
-function Project2_B(gui_img_in)
+function Project2_B(gui_img_in, sigma_gaus, exp_threshold)
 
 % load the image
 % img_in = imread('fig1.png');
@@ -9,7 +9,12 @@ function Project2_B(gui_img_in)
 % img_in = imread('fig6.png');
 % img_in = imread('fig7.png');
 % img_in = imread('fig7.png');
+
+
+
 img_in = imread(char(gui_img_in));
+
+    
 % get the size of the image
 [h, w, ch] = size(img_in);
 
@@ -73,7 +78,7 @@ end
 % [X,Y] = meshgrid(-w:w,-w:w);
 % G = exp(-(X.^2+Y.^2)/(2*sigma_d^2));
 
-q_gauss_filter = fspecial('gaussian', [3 3], 0.6);
+q_gauss_filter = fspecial('gaussian', [3 3], sigma_gaus);
 Q_gauss = imfilter(Q, q_gauss_filter, 'conv', 'circular'); 
 
 Yjnd = double(Q_gauss);
@@ -103,7 +108,7 @@ for i = 1:h
    end
 end
 
-Ymlow = mean( T( T < 0.6 ) );
+Ymlow = mean( T( T < exp_threshold ) );
 Ymhigh = mean( T( T >= 0.6 ) );
 
 Ynorm = Y./255;
@@ -141,6 +146,22 @@ rgbImage_recon_sq = cat(3, R_tag_sq, G_tag_sq, B_tag_sq);
 
 
 % plot the resaults
+
+fig_h = 1;
+fig_w = 2;
+fig_idx = 1;
+
+figure(2);
+subplot(fig_h,fig_w,fig_idx);
+imshow(uint8(img_in));
+title('Orig image');
+
+fig_idx  = fig_idx + 1;
+subplot(fig_h, fig_w, fig_idx);
+imshow(uint8(rgbImage_recon_sq));
+title("gamma corrected Y'");
+
+
 fig_h = 4;
 fig_w = 3;
 fig_idx = 1;
@@ -188,10 +209,8 @@ subplot(fig_h, fig_w, fig_idx);
 imshow(uint8(rgbImage_recon));
 title('Color reconstruction with Y_{sym}');
 
-fig_idx  = fig_idx + 1;
-subplot(fig_h, fig_w, fig_idx);
-imshow(uint8(rgbImage_recon_sq));
-title("Color reconstruction gamma corrected Y'");
+
+
 
 
 
