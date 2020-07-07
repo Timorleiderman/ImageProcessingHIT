@@ -1,10 +1,10 @@
 % Timor Leiderman Image Processing course 2020
-function Project2_A(gui_img_in)
+function Project2_A(gui_img_in, lpf_size, gauss_filter_size, gauss_std)
 
 % define parameters
-lpf_size = 6;
-gauss_filter_size = 20;
-gauss_std = 0.5;
+% lpf_size = 6;
+% gauss_filter_size = 20;
+% gauss_std = 0.5;
 
 % load rgb of gray image
 

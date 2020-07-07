@@ -22,7 +22,7 @@ function varargout = mainGui(varargin)
 
 % Edit the above text to modify the response to help mainGui
 
-% Last Modified by GUIDE v2.5 07-Jul-2020 01:45:27
+% Last Modified by GUIDE v2.5 07-Jul-2020 11:28:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -92,8 +92,8 @@ if isfile(handles.project2b_filepath.String)
 else
     warningMessage = sprintf('Warning: file does not exist:\n%s', handles.project2b_filepath.String);
     uiwait(msgbox(warningMessage));
-    img_file_path = file_path()
-    handles.project2b_filepath.String = img_file_path
+    img_file_path = file_path();
+    handles.project2b_filepath.String = img_file_path;
     Project2_B(img_file_path, ...
         str2double(handles.sigma_project2b.String), ...
         str2double(handles.project2b_exp_theshold.String));
@@ -107,8 +107,23 @@ end
 
 % --- Executes on button press in pushbutton2a.
 function pushbutton2a_Callback(hObject, eventdata, handles)
-clear
-Project2_A(file_path())
+
+if isfile(handles.project2a_filepath.String)
+    Project2_A(handles.project2a_filepath.String, ...
+        str2double(handles.project2a_lpf_size.String), ...
+        str2double(handles.project2a_gauss_filter_size.String), ...
+        str2double(handles.project2a_gauss_std.String) );
+else
+    warningMessage = sprintf('Warning: file does not exist:\n%s', handles.project2a_filepath.String);
+    uiwait(msgbox(warningMessage));
+    img_file_path = file_path();
+    handles.project2a_filepath.String = img_file_path;
+    Project2_A(img_file_path, ...
+        str2double(handles.project2a_lpf_size.String), ...
+        str2double(handles.project2a_gauss_filter_size.String), ...
+        str2double(handles.project2a_gauss_std.String) );
+end
+
 % hObject    handle to pushbutton2a (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -230,6 +245,98 @@ function project2b_exp_theshold_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function project2b_exp_theshold_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to project2b_exp_theshold (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function project2a_filepath_Callback(hObject, eventdata, handles)
+% hObject    handle to project2a_filepath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of project2a_filepath as text
+%        str2double(get(hObject,'String')) returns contents of project2a_filepath as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function project2a_filepath_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to project2a_filepath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function project2a_lpf_size_Callback(hObject, eventdata, handles)
+% hObject    handle to project2a_lpf_size (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of project2a_lpf_size as text
+%        str2double(get(hObject,'String')) returns contents of project2a_lpf_size as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function project2a_lpf_size_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to project2a_lpf_size (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function project2a_gauss_filter_size_Callback(hObject, eventdata, handles)
+% hObject    handle to project2a_gauss_filter_size (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of project2a_gauss_filter_size as text
+%        str2double(get(hObject,'String')) returns contents of project2a_gauss_filter_size as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function project2a_gauss_filter_size_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to project2a_gauss_filter_size (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function project2a_gauss_std_Callback(hObject, eventdata, handles)
+% hObject    handle to project2a_gauss_std (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of project2a_gauss_std as text
+%        str2double(get(hObject,'String')) returns contents of project2a_gauss_std as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function project2a_gauss_std_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to project2a_gauss_std (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
