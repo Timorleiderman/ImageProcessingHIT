@@ -131,7 +131,6 @@ end
 
 % --- Executes on button press in pushbutton1b.
 function pushbutton1b_Callback(hObject, eventdata, handles)
-clear
 Project1_B()
 % hObject    handle to pushbutton1b (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -140,7 +139,6 @@ Project1_B()
 
 % --- Executes on button press in pushbutton1a.
 function pushbutton1a_Callback(hObject, eventdata, handles)
-clear
 Project1_A()
 % hObject    handle to pushbutton1a (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -149,7 +147,6 @@ Project1_A()
 
 % --- Executes on button press in pushbutton1c.
 function pushbutton1c_Callback(hObject, eventdata, handles)
-clear
 Project1_C()
 % hObject    handle to pushbutton1c (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -158,7 +155,6 @@ Project1_C()
 
 % --- Executes on button press in pushbutton1d.
 function pushbutton1d_Callback(hObject, eventdata, handles)
-clear
 Project1_D()
 % hObject    handle to pushbutton1d (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -167,7 +163,6 @@ Project1_D()
 
 % --- Executes on button press in pushbutton1e.
 function pushbutton1e_Callback(hObject, eventdata, handles)
-clear
 Project1_E()
 % hObject    handle to pushbutton1e (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -176,7 +171,6 @@ Project1_E()
 
 % --- Executes on button press in pushbutton3a.
 function pushbutton3a_Callback(hObject, eventdata, handles)
-
 Project3_A(file_path())
 % hObject    handle to pushbutton3a (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -185,7 +179,6 @@ Project3_A(file_path())
 
 % --- Executes on button press in pushbutton3b.
 function pushbutton3b_Callback(hObject, eventdata, handles)
-clear
 Project3_B(file_path())
 % hObject    handle to pushbutton3b (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
