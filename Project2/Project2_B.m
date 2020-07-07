@@ -1,7 +1,11 @@
 % % Timor Leiderman Image Processing course 2020
 % Based on Adaptive enhancement for nonuniform illumination
 % images via nonlinear mapping
+
 function Project2_B(gui_img_in, sigma_gaus, exp_threshold)
+% gui_img_in - input image
+% sigma_gaus - sigma for the fspecial gaussian filter
+% exp_threshold - exposure threshold [0..1]
 
 % load the image
 % img_in = imread('fig1.png');
@@ -9,8 +13,6 @@ function Project2_B(gui_img_in, sigma_gaus, exp_threshold)
 % img_in = imread('fig6.png');
 % img_in = imread('fig7.png');
 % img_in = imread('fig7.png');
-
-
 
 img_in = imread(char(gui_img_in));
 
@@ -35,7 +37,7 @@ B_ch = double(img_in(:,:,3));
 % end
 
 % L is the backgroung avarage of 3X3 window
-L = conv2(Y, ones(3)/9, 'full');
+L = conv2(Y, ones(3)/9, 'same');
 % L = Y
 %calculate luminance adaptation threshold TL
 TL = zeros(h,w);
@@ -104,12 +106,12 @@ Ymedian = mean2(median(Y))/255;
 
 for i = 1:h
    for j = 1:w
-         T(i,j) = ( 1 - Ymedian) / ( 1 + exp( 10*(Yjnd(i,j)/255-0.7) ));
+         T(i,j) = ( 1 - Ymedian) / ( 1 + exp( 10*( (Yjnd(i,j)/255)-0.7 ) ));
    end
 end
 
 Ymlow = mean( T( T < exp_threshold ) );
-Ymhigh = mean( T( T >= 0.6 ) );
+Ymhigh = mean( T( T >= exp_threshold ) );
 
 Ynorm = Y./255;
 for i = 1:h
